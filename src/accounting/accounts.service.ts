@@ -176,6 +176,26 @@ export class AccountsService {
       }
     }
 
+    // Если меняется тип счета, проверяем что нет связанных проводок
+    // (в реальной системе можно добавить более строгую проверку)
+    if (updateDto.type && updateDto.type !== account.type) {
+      const transactionsCount = await this.prisma.transaction.count({
+        where: {
+          organizationId,
+          OR: [
+            { debitAccountId: accountId },
+            { creditAccountId: accountId },
+          ],
+        },
+      });
+
+      if (transactionsCount > 0) {
+        throw new BadRequestException(
+          'Cannot change account type: account has associated transactions. Consider creating a new account instead.',
+        );
+      }
+    }
+
     const updated = await this.prisma.account.update({
       where: { id: accountId },
       data: updateDto,

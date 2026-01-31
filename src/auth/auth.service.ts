@@ -146,6 +146,35 @@ export class AuthService {
     };
   }
 
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+    const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET');
+    
+    if (!refreshSecret) {
+      throw new Error('JWT refresh secret is not configured');
+    }
+
+    try {
+      // Верификация refresh token
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: refreshSecret,
+      });
+
+      // Проверка существования пользователя
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      // Генерация новых токенов
+      return await this.generateTokens(user.id, user.email);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
   private async generateTokens(userId: string, email: string) {
     const payload = { sub: userId, email };
 

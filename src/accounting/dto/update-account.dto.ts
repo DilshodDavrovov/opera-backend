@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsEnum } from 'class-validator';
+import { AccountType } from '../../common/types/account-type.type';
 
 export class UpdateAccountDto {
   @IsString()
@@ -8,6 +9,10 @@ export class UpdateAccountDto {
   @IsString()
   @IsOptional()
   name?: string;
+
+  @IsEnum(AccountType)
+  @IsOptional()
+  type?: AccountType;
 
   @IsString()
   @IsOptional()
