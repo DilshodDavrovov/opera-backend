@@ -137,6 +137,33 @@ export class OrganizationsService {
     });
   }
 
+  async getUsers(
+    userId: string,
+    organizationId: string,
+  ): Promise<any[]> {
+    // Проверяем доступ
+    await this.checkAccess(userId, organizationId);
+
+    const userOrganizations = await this.prisma.userOrganization.findMany({
+      where: { organizationId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return userOrganizations;
+  }
+
   async removeUser(
     userId: string,
     organizationId: string,

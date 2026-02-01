@@ -22,7 +22,7 @@ export class ReportsController {
   constructor(private reportsService: ReportsService) {}
 
   @Get('balance')
-  @RequireRoles(Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
+  @RequireRoles(Role.VIEWER as RoleType, Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
   async getBalanceReport(
     @CurrentUser() user: any,
     @Param('organizationId') organizationId: string,
@@ -44,7 +44,7 @@ export class ReportsController {
   }
 
   @Get('profit-loss')
-  @RequireRoles(Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
+  @RequireRoles(Role.VIEWER as RoleType, Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
   async getProfitLossReport(
     @CurrentUser() user: any,
     @Param('organizationId') organizationId: string,
@@ -67,7 +67,7 @@ export class ReportsController {
   }
 
   @Get('cash-flow')
-  @RequireRoles(Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
+  @RequireRoles(Role.VIEWER as RoleType, Role.ACCOUNTANT as RoleType, Role.OWNER as RoleType)
   async getCashFlowReport(
     @CurrentUser() user: any,
     @Param('organizationId') organizationId: string,

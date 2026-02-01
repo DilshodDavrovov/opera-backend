@@ -71,6 +71,15 @@ export class OrganizationsController {
     await this.organizationsService.remove(user.id, organizationId);
   }
 
+  @Get(':organizationId/users')
+  @UseGuards(OrganizationAccessGuard)
+  async getUsers(
+    @CurrentUser() user: any,
+    @Param('organizationId') organizationId: string,
+  ) {
+    return this.organizationsService.getUsers(user.id, organizationId);
+  }
+
   @Post(':organizationId/users')
   @UseGuards(OrganizationAccessGuard, RoleGuard)
   @RequireRoles(Role.OWNER as RoleType, Role.ACCOUNTANT as RoleType)
